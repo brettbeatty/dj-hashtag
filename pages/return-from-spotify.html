@@ -1,0 +1,29 @@
+<html>
+		<title>DJ# - Add tracks to your playlist via Twitter</title>
+	</head>
+	<body>
+		<form method="post" action="/prompt" id="myForm"></form>
+		<script type="text/javascript">
+		if (window.location.hash) {
+
+			var hash = window.location.hash.slice(1);
+			var form = document.getElementById('myForm');
+			var params = hash.split('&');
+			
+			for (let i = 0; i < params.length; i++) {
+
+				let param = params[i].split('=');
+				let input = document.createElement('input');
+				input.type = 'hidden';
+				input.name = param[0];
+				input.value = param[1];
+				form.appendChild(input);
+
+			}
+
+		}
+
+		form.submit();
+		</script>
+	</body>
+</html>
