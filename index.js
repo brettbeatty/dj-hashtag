@@ -42,7 +42,7 @@ app.post('/', (request, response) => {
 
 				openSocket(args);
 
-				response.end();
+				response.sendFile(__dirname + '/pages/index.html');
 
 			}).catch((err) => {
 
@@ -277,9 +277,15 @@ function getUserID(args) {
 
 function openSocket(args) {
 
+	console.log('listening for socket connection');
+
 	io.on('connection', (socket) => {
 
+		console.log('socket connection');
+
 		socket.on('disconnect', () => {
+
+			console.log('socket disconnection');
 
 			args.twitter_stream.destroy();
 
