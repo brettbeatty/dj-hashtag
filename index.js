@@ -1,6 +1,8 @@
 var app = require('express')();
 var fs = require('fs');
+var http = require('http').Server(app);
 var https = require('https');
+var io = require('socket.io')(http);
 var OAuth = require('oauth').OAuth;
 var open = require('opener');
 var querystring = require('querystring');
@@ -36,8 +38,13 @@ app.post('/', (request, response) => {
 			.then(getUserID)
 			.then(getPlaylistID)
 			.then(openStream)
-			.then(() => response.end())
-			.catch((err) => {
+			.then((args) => {
+
+				openSocket(args);
+
+				response.end();
+
+			}).catch((err) => {
 
 				response.writeHead(500);
 
@@ -268,6 +275,20 @@ function getUserID(args) {
 
 }
 
+function openSocket(args) {
+
+	io.on('connection', (socket) => {
+
+		socket.on('disconnect', () => {
+
+			args.twitter_stream.destroy();
+
+		});
+
+	});
+
+}
+
 function processTweet(args) {
 
 	var i = 0;
@@ -352,6 +373,8 @@ function openStream(args) {
 		var stream = twitter.stream('statuses/filter', {
 			track: '#' + args.hashtag
 		});
+
+		args.twitter_stream = stream;
 
 		stream.on('data', (event) => {
 
